@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nhật Ký 3 Năm Cấp 3</title>
+<style>
+  :root{
+    --bg:#faf6f0;
+    --paper:#fffdf8;
+    --accent:#d98e73;
+    --accent-dark:#b8654a;
+    --ink:#3a3226;
+    --muted:#8a7f6d;
+    --line:#e7ddd0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height:100vh;
+  }
+  header{
+    text-align:center;
+    padding:32px 16px 16px;
+  }
+  header h1{
+    margin:0;
+    font-size:1.8rem;
+    letter-spacing:1px;
+  }
+  header p{
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .container{
+    max-width:820px;
+    margin:0 auto;
+    padding:0 16px 60px;
+  }
+  .tabs{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    padding:8px 18px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    cursor:pointer;
+    font-size:0.95rem;
+    transition:0.2s;
+  }
+  .tab-btn.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  form label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+    margin-top:14px;
+    font-size:0.9rem;
+    color:var(--muted);
+  }
+  form input[type="text"],
+  form input[type="date"],
+  form select,
+  form textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    font-size:1rem;
+    font-family:inherit;
+    background:#fff;
+    color:var(--ink);
+  }
+  form textarea{
+    min-height:160px;
+    resize:vertical;
+    line-height:1.5;
+  }
+  .row{
+    display:flex;
+    gap:12px;
+  }
+  .row > div{flex:1;}
+
+  .btn{
+    margin-top:18px;
+    padding:10px 22px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:1rem;
+    cursor:pointer;
+    transition:0.2s;
+  }
+  .btn:hover{background:var(--accent-dark);}
+  .btn.secondary{
+    background:transparent;
+    color:var(--accent-dark);
+    border:1px solid var(--accent);
+  }
+  .btn.danger{
+    background:#c0453a;
+  }
+  .btn.danger:hover{background:#9c352c;}
+
+  .entry{
+    border-left:4px solid var(--accent);
+    padding:14px 16px;
+    margin-bottom:14px;
+    background:var(--paper);
+    border-radius:0 10px 10px 0;
+    border:1px solid var(--line);
+    border-left:4px solid var(--accent);
+  }
+  .entry-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .entry-title{
+    font-weight:700;
+    font-size:1.1rem;
+  }
+  .entry-date{
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+  .entry-grade{
+    display:inline-block;
+    font-size:0.75rem;
+    padding:2px 10px;
+    border-radius:12px;
+    background:#f1e4d8;
+    color:var(--accent-dark);
+    margin-left:8px;
+  }
+  .entry-content{
+    white-space:pre-wrap;
+    line-height:1.6;
+  }
+  .entry-actions{
+    margin-top:10px;
+    display:flex;
+    gap:8px;
+  }
+  .entry-actions button{
+    font-size:0.8rem;
+    padding:4px 12px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+  }
+  .entry-actions button.delete{color:#c0453a;}
+
+  .empty{
+    text-align:center;
+    color:var(--muted);
+    padding:40px 0;
+  }
+
+  .filter-bar{
+    display:flex;
+    gap:10px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .filter-bar select, .filter-bar input{
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    font-family:inherit;
+  }
+
+  .stats{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+  .stat{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 18px;
+    text-align:center;
+    min-width:90px;
+  }
+  .stat .num{font-size:1.4rem;font-weight:700;color:var(--accent-dark);}
+  .stat .label{font-size:0.75rem;color:var(--muted);}
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.8rem;
+    padding-bottom:30px;
+  }
+
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📔 Nhật Ký 3 Năm Cấp 3</h1>
+  <p>Lớp 10 - Lớp 11 - Lớp 12 — lưu lại từng khoảnh khắc</p>
+</header>
+
+<div class="container">
+
+  <div class="stats" id="statsBar"></div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="write">✍️ Viết nhật ký</button>
+    <button class="tab-btn" data-tab="list">📖 Xem nhật ký</button>
+  </div>
+
+  <!-- TAB: WRITE -->
+  <div id="tab-write" class="card">
+    <form id="entryForm">
+      <input type="hidden" id="editId">
+      <div class="row">
+        <div>
+          <label for="entryDate">Ngày</label>
+          <input type="date" id="entryDate" required>
+        </div>
+        <div>
+          <label for="entryGrade">Khối lớp</label>
+          <select id="entryGrade" required>
+            <option value="10">Lớp 10</option>
+            <option value="11">Lớp 11</option>
+            <option value="12">Lớp 12</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="entryTitle">Tiêu đề</label>
+      <input type="text" id="entryTitle" placeholder="VD: Ngày khai giảng đáng nhớ" required>
+
+      <label for="entryMood">Cảm xúc hôm nay</label>
+      <select id="entryMood">
+        <option value="😊">😊 Vui</option>
+        <option value="😢">😢 Buồn</option>
+        <option value="😆">😆 Hào hứng</option>
+        <option value="😴">😴 Mệt mỏi</option>
+        <option value="😡">😡 Bực bội</option>
+        <option value="🥹">🥹 Xúc động</option>
+        <option value="😌">😌 Bình yên</option>
+      </select>
+
+      <label for="entryContent">Nội dung</label>
+      <textarea id="entryContent" placeholder="Hôm nay đã xảy ra chuyện gì..." required></textarea>
+
+      <button type="submit" class="btn" id="submitBtn">Lưu nhật ký</button>
+      <button type="button" class="btn secondary hidden" id="cancelEditBtn">Hủy chỉnh sửa</button>
+    </form>
+  </div>
+
+  <!-- TAB: LIST -->
+  <div id="tab-list" class="card hidden">
+    <div class="filter-bar">
+      <select id="filterGrade">
+        <option value="all">Tất cả khối lớp</option>
+        <option value="10">Lớp 10</option>
+        <option value="11">Lớp 11</option>
+        <option value="12">Lớp 12</option>
+      </select>
+      <input type="text" id="searchBox" placeholder="Tìm theo tiêu đề hoặc nội dung...">
+      <button class="btn secondary" id="exportBtn" type="button">⬇️ Xuất file .json</button>
+    </div>
+    <div id="entryList"></div>
+  </div>
+
+</div>
+
+<footer>Dữ liệu được lưu tự động trên trình duyệt này (localStorage) — không mất khi tắt máy, nhưng chỉ có trên máy/trình duyệt này thôi nhé. Nhớ bấm "Xuất file" để sao lưu định kỳ.</footer>
+
+<script>
+/* =========================================================
+   KHUNG DỮ LIỆU NHẬT KÝ
+   Mỗi entry: { id, date, grade, title, mood, content, createdAt }
+   Lưu trong localStorage dưới key "nhatky_capba"
+   ========================================================= */
+
+const STORAGE_KEY = "nhatky_capba";
+
+function loadEntries(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    console.error("Lỗi đọc dữ liệu:", e);
+    return [];
+  }
+}
+
+function saveEntries(entries){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+/* Hàm tiện dùng để THÊM nhật ký bằng code, nếu muốn nạp sẵn nhiều bài
+   mà không cần gõ tay qua form. Ví dụ dùng trong console:
+
+   addEntryProgrammatically({
+     date: "2023-09-05",
+     grade: "10",
+     title: "Ngày khai giảng",
+     mood: "😊",
+     content: "Hôm nay là ngày đầu tiên..."
+   });
+*/
+function addEntryProgrammatically({date, grade, title, mood="😊", content}){
+  const entries = loadEntries();
+  entries.push({
+    id: Date.now() + Math.random().toString(16).slice(2),
+    date, grade, title, mood, content,
+    createdAt: new Date().toISOString()
+  });
+  saveEntries(entries);
+  renderAll();
+}
+
+/* ---------- DOM refs ---------- */
+const entryForm = document.getElementById('entryForm');
+const editIdInput = document.getElementById('editId');
+const entryDate = document.getElementById('entryDate');
+const entryGrade = document.getElementById('entryGrade');
+const entryTitle = document.getElementById('entryTitle');
+const entryMood = document.getElementById('entryMood');
+const entryContent = document.getElementById('entryContent');
+const submitBtn = document.getElementById('submitBtn');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+const entryListEl = document.getElementById('entryList');
+const filterGrade = document.getElementById('filterGrade');
+const searchBox = document.getElementById('searchBox');
+const statsBar = document.getElementById('statsBar');
+const exportBtn = document.getElementById('exportBtn');
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('tab-write').classList.toggle('hidden', tab!=='write');
+    document.getElementById('tab-list').classList.toggle('hidden', tab!=='list');
+    if(tab==='list') renderList();
+  });
+});
+
+/* ---------- Submit form (thêm / sửa) ---------- */
+entryForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const entries = loadEntries();
+
+  const data = {
+    date: entryDate.value,
+    grade: entryGrade.value,
+    title: entryTitle.value.trim(),
+    mood: entryMood.value,
+    content: entryContent.value.trim()
+  };
+
+  if(editIdInput.value){
+    const idx = entries.findIndex(en=>en.id === editIdInput.value);
+    if(idx > -1){
+      entries[idx] = {...entries[idx], ...data};
+    }
+    resetForm();
+  } else {
+    entries.push({
+      id: Date.now() + Math.random().toString(16).slice(2),
+      ...data,
+      createdAt: new Date().toISOString()
+    });
+    entryForm.reset();
+    entryDate.value = todayStr();
+  }
+
+  saveEntries(entries);
+  renderAll();
+
+  // chuyển qua tab xem sau khi lưu
+  document.querySelector('.tab-btn[data-tab="list"]').click();
+});
+
+cancelEditBtn.addEventListener('click', resetForm);
+
+function resetForm(){
+  entryForm.reset();
+  editIdInput.value = "";
+  entryDate.value = todayStr();
+  submitBtn.textContent = "Lưu nhật ký";
+  cancelEditBtn.classList.add('hidden');
+}
+
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+
+/* ---------- Render danh sách ---------- */
+function renderList(){
+  const entries = loadEntries().sort((a,b)=> new Date(b.date) - new Date(a.date));
+  const gradeFilter = filterGrade.value;
+  const search = searchBox.value.trim().toLowerCase();
+
+  const filtered = entries.filter(en=>{
+    const matchGrade = gradeFilter==='all' || en.grade === gradeFilter;
+    const matchSearch = !search ||
+      en.title.toLowerCase().includes(search) ||
+      en.content.toLowerCase().includes(search);
+    return matchGrade && matchSearch;
+  });
+
+  if(filtered.length === 0){
+    entryListEl.innerHTML = `<div class="empty">Chưa có nhật ký nào. Hãy viết bài đầu tiên nhé! ✍️</div>`;
+    return;
+  }
+
+  entryListEl.innerHTML = filtered.map(en=>`
+    <div class="entry" data-id="${en.id}">
+      <div class="entry-meta">
+        <div>
+          <span class="entry-title">${en.mood} ${escapeHtml(en.title)}</span>
+          <span class="entry-grade">Lớp ${en.grade}</span>
+        </div>
+        <span class="entry-date">${formatDate(en.date)}</span>
+      </div>
+      <div class="entry-content">${escapeHtml(en.content)}</div>
+      <div class="entry-actions">
+        <button class="edit">Sửa</button>
+        <button class="delete">Xóa</button>
+      </div>
+    </div>
+  `).join('');
+
+  entryListEl.querySelectorAll('.entry').forEach(card=>{
+    const id = card.dataset.id;
+    card.querySelector('.edit').addEventListener('click', ()=>editEntry(id));
+    card.querySelector('.delete').addEventListener('click', ()=>deleteEntry(id));
+  });
+}
+
+function editEntry(id){
+  const entries = loadEntries();
+  const en = entries.find(e=>e.id===id);
+  if(!en) return;
+  editIdInput.value = en.id;
+  entryDate.value = en.date;
+  entryGrade.value = en.grade;
+  entryTitle.value = en.title;
+  entryMood.value = en.mood;
+  entryContent.value = en.content;
+  submitBtn.textContent = "Cập nhật nhật ký";
+  cancelEditBtn.classList.remove('hidden');
+  document.querySelector('.tab-btn[data-tab="write"]').click();
+}
+
+function deleteEntry(id){
+  if(!confirm("Xóa nhật ký này? Không thể hoàn tác.")) return;
+  const entries = loadEntries().filter(e=>e.id!==id);
+  saveEntries(entries);
+  renderAll();
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatDate(dateStr){
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+/* ---------- Thống kê ---------- */
+function renderStats(){
+  const entries = loadEntries();
+  const counts = {10:0, 11:0, 12:0};
+  entries.forEach(en=>{ if(counts[en.grade] !== undefined) counts[en.grade]++; });
+
+  statsBar.innerHTML = `
+    <div class="stat"><div class="num">${entries.length}</div><div class="label">Tổng bài viết</div></div>
+    <div class="stat"><div class="num">${counts[10]}</div><div class="label">Lớp 10</div></div>
+    <div class="stat"><div class="num">${counts[11]}</div><div class="label">Lớp 11</div></div>
+    <div class="stat"><div class="num">${counts[12]}</div><div class="label">Lớp 12</div></div>
+  `;
+}
+
+/* ---------- Xuất dữ liệu ---------- */
+exportBtn.addEventListener('click', ()=>{
+  const entries = loadEntries();
+  const blob = new Blob([JSON.stringify(entries, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `nhat-ky-cap-3-${todayStr()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+filterGrade.addEventListener('change', renderList);
+searchBox.addEventListener('input', renderList);
+
+function renderAll(){
+  renderStats();
+  renderList();
+}
+
+/* ---------- Khởi tạo ---------- */
+entryDate.value = todayStr();
+renderAll();
+</script>
+
+</body>
+</html>
